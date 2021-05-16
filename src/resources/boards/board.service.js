@@ -1,6 +1,7 @@
 const Board = require('./board.model');
 const Column = require('./column.model');
 const boardsRepo = require('./board.memory.repository');
+const tasksRepo = require('../tasks/task.memory.repository');
 
 const getAll = () => boardsRepo.getAll();
 
@@ -39,6 +40,8 @@ const remove = async (boardId) => {
   if (!board) {
     throw new Error(`Board with id: ${boardId} doesn't exist`);
   }
+  const tasksToDelete = await tasksRepo.getAllForBoard(boardId);
+  tasksToDelete.forEach((task) => tasksRepo.remove(task));
   return boardsRepo.remove(board);
 };
 

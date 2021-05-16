@@ -1,5 +1,7 @@
 const User = require('./user.model');
+const Task = require('../tasks/task.model');
 const usersRepo = require('./user.memory.repository');
+const tasksRepo = require('../tasks/task.memory.repository');
 
 const getAll = () => usersRepo.getAll();
 
@@ -36,6 +38,10 @@ const remove = async (userId) => {
   if (!user) {
     throw new Error(`User with id: ${userId} doesn't exist`);
   }
+  const tasksToUpdate = await tasksRepo.getAllForUser(user.id);
+  tasksToUpdate.forEach((task) => {
+    tasksRepo.update(new Task({ ...task, userId: null })); 
+  });
   return usersRepo.remove(user);
 };
 
